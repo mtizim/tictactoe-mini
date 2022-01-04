@@ -7,6 +7,7 @@ from passlib.context import CryptContext
 from tinydb import Query
 from models import PlayerInternal, RegistrationDTO, RegistrationError, LeaderboardData
 import database as db
+from server import ANON, DEFAULT_ELO
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -31,7 +32,7 @@ def _validate_password(password: str) -> bool:
 
 def register(dto: RegistrationDTO) -> Tuple[bool, RegistrationError]:
     errors = []
-    if get_player(dto.username):
+    if dto.username == ANON or get_player(dto.username):
         errors.append(RegistrationError.ALREADY_TAKEN)
 
     if not _validate_username(dto.username):
@@ -49,7 +50,7 @@ def register(dto: RegistrationDTO) -> Tuple[bool, RegistrationError]:
         leaderboard_data=LeaderboardData(
             wins=0,
             games=0,
-            elo=1500,
+            elo=DEFAULT_ELO,
         ),
     )
     db.players.insert(new_player.dict())
@@ -70,6 +71,7 @@ def get_player(username: str) -> PlayerInternal:
     if len(results) == 1:
         player_dict = results[0]
         return PlayerInternal(**player_dict)
+    return None
 
 
 def authenticate_player(username: str, password: str) -> Optional[PlayerInternal]:
