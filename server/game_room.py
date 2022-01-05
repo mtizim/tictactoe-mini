@@ -1,5 +1,6 @@
 from fastapi import WebSocket
 from fastapi import WebSocketDisconnect
+import ws_models
 
 
 class GameRoom:
@@ -16,96 +17,121 @@ class GameRoom:
     def __init__(self, creator_token: str):
         self.creator_token = creator_token
 
-    both_connected: bool = False
-
     __circle_player_ws: WebSocket = None
     __cross_player_ws: WebSocket = None
 
-    async def __check_if_both_connected(self):
-        if self.__circle_player_ws is not None and self.__cross_player_ws is not None:
-            self.both_connected = True
+    async def _check_both_registered(self):
+        if self.__circle_token is not None and self.__cross_token is not None:
             await self._start_game()
 
-    async def verify_token_for_circle(self, wbs: WebSocket):
+    async def register_token_for_circle(self, wbs: WebSocket):
         """
         Verifies or binds ws to a token
         """
         try:
-            if self.__circle_player_ws is not None:
-                await wbs.close()
-
             await wbs.accept()
 
-            token = await wbs.receive_text()
+            await wbs.send_json(
+                ws_models.OutMessage(
+                    message_type=ws_models.OutMessageType.WAITING_FOR_REGISTRATION
+                ).dict()
+            )
 
-            if self.__circle_token is None:
-                if token == self.__cross_token:
-                    print(token, self.__cross_token)
-                    await wbs.close()
+            received = await wbs.receive_json()
+
+            try:
+                parsed = ws_models.InMessage(**received)
+            # pylint: disable=broad-except
+            except Exception:
+                return
+
+            if parsed.message_type == ws_models.InMessageType.REGISTER:
+                token = parsed.token
+                print(token)
                 self.__circle_token = token
                 self.__circle_player_ws = wbs
+                await self._send_circle_message(
+                    ws_models.Reponse(failure_mode=ws_models.FailureMode.NONE)
+                )
 
-                # ! todo listen to messages in a separate thread, otherwise the sockets do get closed
-                while True:
-                    await self.__check_if_both_connected()
-                    x = await self.__circle_player_ws.receive_text()
-                    print(x)
-                await future
-                return
+            async for msg in wbs.iter_json():
+                await self._handle_circle_message(ws_models.InMessage(**msg))
 
-            # elif self.__circle_token == token:
-            #     self.__circle_player_ws = wbs
-            #     await self.__check_if_both_connected()
-
-            else:
-                await wbs.close()
         except WebSocketDisconnect:
             return
 
-    async def verify_token_for_cross(self, wbs: WebSocket):
+    async def register_token_for_cross(self, wbs: WebSocket):
         """
         Verifies or binds ws to a token
         """
+
         try:
-            if self.__cross_player_ws is not None:
-                await wbs.close()
 
             await wbs.accept()
 
-            token = await wbs.receive_text()
+            await wbs.send_json(
+                ws_models.OutMessage(
+                    message_type=ws_models.OutMessageType.WAITING_FOR_REGISTRATION
+                )
+            )
 
-            if self.__cross_token is None:
-                if token == self.__circle_token:
-                    print(token, self.__circle_token)
-                    await wbs.close()
-                self.__cross_token = token
-                self.__cross_player_ws = wbs
-                while True:
-                    await self.__check_if_both_connected()
-                    x = await self.__cross_player_ws.receive_text()
-                    print(x)
+            received = await wbs.receive_json()
+
+            try:
+                parsed = ws_models.InMessage(**received)
+            # pylint: disable=broad-except
+            except Exception:
                 return
 
-            # elif self.__cross_token == token:
-            #     self.__cross_player_ws = wbs
-            #     await self.__check_if_both_connected()
-            #     return
+            if parsed.message_type == ws_models.InMessageType.REGISTER:
+                token = parsed.token
+                self.__cross_token = token
+                self.__cross_player_ws = wbs
+                await self._send_cross_message(
+                    ws_models.Reponse(failure_mode=ws_models.FailureMode.NONE)
+                )
 
-            else:
-                await wbs.close()
+            async for msg in wbs.iter_json():
+                await self._handle_cross_message(ws_models.InMessage(**msg))
+
         except WebSocketDisconnect:
             return
 
+    async def register_token_for_second_player(self, wbs: WebSocket):
+        """
+        Redirects a websocket to a free one
+        """
+        if self.__cross_player_ws is not None and self.__circle_player_ws is not None:
+            await wbs.close()
+        elif self.__cross_player_ws is None:
+            self.register_token_for_cross(wbs)
+        else:
+            self.register_token_for_circle(wbs)
+
+    async def _send_circle_message(self, msg: ws_models.OutMessage):
+        try:
+            await self.__circle_player_ws.send_json(msg.dict())
+        except WebSocketDisconnect:
+            return
+
+    async def _send_cross_message(self, msg: ws_models.OutMessage):
+        try:
+            await self.__cross_player_ws.send_json(msg.dict())
+        except WebSocketDisconnect:
+            return
+
+    # TODO more handling here
+    async def _handle_circle_message(self, msg: ws_models.InMessage):
+        if msg.token != self.__circle_token:
+            await self._send_circle_message(
+                ws_models.Reponse(failure_mode=ws_models.FailureMode.BAD_TOKEN)
+            )
+
+    async def _handle_cross_message(self, msg: ws_models.InMessage):
+        if msg.token != self.__cross_token:
+            await self._send_cross_message(
+                ws_models.Reponse(failure_mode=ws_models.FailureMode.BAD_TOKEN)
+            )
+
     async def _start_game(self):
-        try:
-            await self.__cross_player_ws.send_text("game_started")
-        except BaseException as e:
-            print(e)
-
-        try:
-            await self.__circle_player_ws.send_text("game_started2")
-        except BaseException as e:
-            print(e)
-
-        print("sent???")
-        print("received???")
+        pass

@@ -51,7 +51,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
         data={"sub": user.username},
         expires_delta=access_token_expires,
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token}
 
 
 @app.post("/token/anon", response_model=models.Token)
@@ -64,7 +64,7 @@ async def anon_token():
         data={"sub": ANON},
         expires_delta=access_token_expires,
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token}
 
 
 @app.post("/register", response_model=models.RegistrationResponse)
@@ -130,7 +130,6 @@ def create_room(
         )
     active_rooms[room_id] = game_room.GameRoom(token)
     print(active_rooms[room_id])
-    return None
 
 
 @app.websocket("/room/{room_id}/circle")
@@ -145,7 +144,7 @@ async def circle_websocket(
         await wbs.close()
         return
     room = active_rooms[room_id]
-    await room.verify_token_for_circle(wbs)
+    await room.register_token_for_circle(wbs)
 
 
 @app.websocket("/room/{room_id}/cross")
@@ -160,4 +159,4 @@ async def cross_websocket(
         await wbs.close()
         return
     room = active_rooms[room_id]
-    await room.verify_token_for_cross(wbs)
+    await room.register_token_for_second_player(wbs)

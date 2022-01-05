@@ -9,17 +9,18 @@ from models import PlayerInternal, RegistrationDTO, RegistrationError, Leaderboa
 import database as db
 from server import ANON, DEFAULT_ELO
 
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# ! TODO place in secure location
+#  TODO  place in secure location
 SECRET_KEY = "1ec023f338e97101a71edbf5e868db9a88012bcb4305168bccbd00ba69245440"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 1000
 
 
-# * TODO, probably some validation here
+#  TODO, probably some validation here
 # pylint: disable=unused-argument
 def _validate_username(username: str) -> bool:
     return True
