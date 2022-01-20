@@ -6,6 +6,11 @@ from pydantic import BaseModel
 # Serwer wysyła OutMessage i Response
 
 
+class CrossOrCircle(str, Enum):
+    CROSS = "cross"
+    CIRCLE = "circle"
+
+
 class InMessageType(str, Enum):
     REGISTER = "register"  #   command, registers this token to this websocket
     #                                   ALWAYS send after WAITING_FOR_REGISTRATION request
@@ -51,13 +56,29 @@ class BoardData(BaseModel):
 
 
 class OutMessageType(str, Enum):
-    WAITING_FOR_REGISTRATION = "waiting_for_registration"  # no payload
+    WAITING_FOR_REGISTRATION = "waiting_for_registration"  # payload: CrossOrCircle.
+    #                             Use the payload to determine which player you are.
 
-    BOARD_DATA = "board_data"  # payload: BoardData
+    BOARD_DATA = "board_data"  #     payload: BoardData
 
-    WAITING_FOR_MOVE = "waiting_for_move"
+    WAITING_FOR_MOVE = "waiting_for_move"  # no payload
+    WAITING_FOR_OTHER_MOVE = "waiting_for_other_move"  # no payload
 
-    WAITING_FOR_OTHER_MOVE = "waiting_for_other_move"
+    GAME_ENDED = "game_ended"  # payload: GameEndedPayload
+
+
+class GameEndedReason(str, Enum):
+    CIRCLE_WON = "circle_won"
+    CROSS_WON = "cross_won"
+    CIRCLE_SURRENDER = "circle_surrender"
+    CROSS_SURRENDER = "cross_surrender"
+    ERROR = "error"
+
+
+class GameEndedPayload(BaseModel):
+    reason: GameEndedReason
+    elo_delta: int
+    opponent_elo_delta: int
 
 
 class OutMessage(BaseModel):

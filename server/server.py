@@ -138,7 +138,8 @@ async def circle_websocket(
     room_id: str,
 ):
     """
-    The ws for the circle player. The connection will be rejected on bad token or nonexistent room
+    The ws for the circle player. Use this after room creation, for the first player.
+    The connection will be rejected on bad token or nonexistent room
     """
     if room_id not in active_rooms:
         await wbs.close()
@@ -153,7 +154,24 @@ async def cross_websocket(
     room_id: str,
 ):
     """
-    The ws for the cross player. The connection will be rejected on bad token or nonexistent room
+    The ws for the cross player. Use this after room creation, for the first player.
+    The connection will be rejected on bad token or nonexistent room
+    """
+    if room_id not in active_rooms:
+        await wbs.close()
+        return
+    room = active_rooms[room_id]
+    await room.register_token_for_second_player(wbs)
+
+
+@app.websocket("/room/{room_id}/other")
+async def other_websocket(
+    wbs: WebSocket,
+    room_id: str,
+):
+    """
+    The ws for the second player that joins the room. Use this to join an existing room.
+    The connection will be rejected on bad token or nonexistent room
     """
     if room_id not in active_rooms:
         await wbs.close()

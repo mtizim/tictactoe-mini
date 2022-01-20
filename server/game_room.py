@@ -5,7 +5,7 @@ import ws_models
 
 class GameRoom:
     """
-    Represents both a game room and a game object
+    Represents a game room and handles the game object
     Responsible for handling everything game related
     """
 
@@ -30,10 +30,10 @@ class GameRoom:
         """
         try:
             await wbs.accept()
-
             await wbs.send_json(
                 ws_models.OutMessage(
-                    message_type=ws_models.OutMessageType.WAITING_FOR_REGISTRATION
+                    message_type=ws_models.OutMessageType.WAITING_FOR_REGISTRATION,
+                    payload=ws_models.CrossOrCircle.CIRCLE,
                 ).dict()
             )
 
@@ -64,14 +64,12 @@ class GameRoom:
         """
         Verifies or binds ws to a token
         """
-
         try:
-
             await wbs.accept()
-
             await wbs.send_json(
                 ws_models.OutMessage(
-                    message_type=ws_models.OutMessageType.WAITING_FOR_REGISTRATION
+                    message_type=ws_models.OutMessageType.WAITING_FOR_REGISTRATION,
+                    payload=ws_models.CrossOrCircle.CIRCLE,
                 )
             )
 
@@ -126,12 +124,20 @@ class GameRoom:
             await self._send_circle_message(
                 ws_models.Reponse(failure_mode=ws_models.FailureMode.BAD_TOKEN)
             )
+        if msg.message_type == ws_models.InMessageType.SURRENDER:
+            pass
+        if msg.message_type == ws_models.InMessageType.MOVE:
+            pass
 
     async def _handle_cross_message(self, msg: ws_models.InMessage):
         if msg.token != self.__cross_token:
             await self._send_cross_message(
                 ws_models.Reponse(failure_mode=ws_models.FailureMode.BAD_TOKEN)
             )
+        if msg.message_type == ws_models.InMessageType.SURRENDER:
+            pass
+        if msg.message_type == ws_models.InMessageType.MOVE:
+            pass
 
     async def _start_game(self):
         pass
