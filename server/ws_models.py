@@ -2,6 +2,9 @@ from enum import Enum
 from typing import Optional, Any
 from pydantic import BaseModel
 
+# Do serwera wysyłasz InMessage
+# Serwer wysyła OutMessage i Response
+
 
 class InMessageType(str, Enum):
     REGISTER = "register"  #   command, registers this token to this websocket
@@ -51,6 +54,10 @@ class OutMessageType(str, Enum):
     WAITING_FOR_REGISTRATION = "waiting_for_registration"  # no payload
 
     BOARD_DATA = "board_data"  # payload: BoardData
+
+    WAITING_FOR_MOVE = "waiting_for_move"
+
+    WAITING_FOR_OTHER_MOVE = "waiting_for_other_move"
 
 
 class OutMessage(BaseModel):
