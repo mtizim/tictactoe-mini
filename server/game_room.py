@@ -1,6 +1,7 @@
 from fastapi import WebSocket
 from fastapi import WebSocketDisconnect
 import rx
+import rx.operators as ops
 from rx.subject import Subject
 import asyncio
 import ws_models
@@ -65,11 +66,6 @@ class GameRoom:
 
             sub = Subject()
 
-            async def __listener(msg: str):
-                await self._handle_circle_message(ws_models.InMessage(**msg))
-
-            sub.subscribe(lambda msg: asyncio.create_task(__listener(msg)))
-
             self.__circle_player_subject = sub
 
             self.__current_player_count += 1
@@ -77,6 +73,12 @@ class GameRoom:
                 asyncio.create_task(self._start_game())
 
             async for msg in wbs.iter_json():
+                msg = ws_models.InMessage(**msg)
+                if msg.token != self.__circle_token:
+                    await self._send_circle_message(
+                        ws_models.Reponse(failure_mode=ws_models.FailureMode.BAD_TOKEN)
+                    )
+                    continue
                 sub.on_next(msg)
 
         except WebSocketDisconnect:
@@ -91,7 +93,7 @@ class GameRoom:
             await wbs.send_json(
                 ws_models.OutMessage(
                     message_type=ws_models.OutMessageType.WAITING_FOR_REGISTRATION,
-                    payload=ws_models.CrossOrCircle.CIRCLE,
+                    payload=ws_models.CrossOrCircle.CROSS,
                 ).dict()
             )
 
@@ -115,11 +117,6 @@ class GameRoom:
 
             sub = Subject()
 
-            async def __listener(msg: str):
-                await self._handle_cross_message(ws_models.InMessage(**msg))
-
-            sub.subscribe(lambda msg: asyncio.create_task(__listener(msg)))
-
             self.__cross_player_subject = sub
 
             self.__current_player_count += 1
@@ -127,6 +124,12 @@ class GameRoom:
                 asyncio.create_task(self._start_game())
 
             async for msg in wbs.iter_json():
+                msg = ws_models.InMessage(**msg)
+                if msg.token != self.__cross_token:
+                    await self._send_cross_message(
+                        ws_models.Reponse(failure_mode=ws_models.FailureMode.BAD_TOKEN)
+                    )
+                    continue
                 sub.on_next(msg)
 
         except WebSocketDisconnect:
@@ -154,27 +157,6 @@ class GameRoom:
             await self.__cross_player_ws.send_json(msg.dict())
         except WebSocketDisconnect:
             return
-
-    # TODO more handling here
-    async def _handle_circle_message(self, msg: ws_models.InMessage):
-        if msg.token != self.__circle_token:
-            await self._send_circle_message(
-                ws_models.Reponse(failure_mode=ws_models.FailureMode.BAD_TOKEN)
-            )
-        if msg.message_type == ws_models.InMessageType.SURRENDER:
-            pass
-        if msg.message_type == ws_models.InMessageType.MOVE:
-            pass
-
-    async def _handle_cross_message(self, msg: ws_models.InMessage):
-        if msg.token != self.__cross_token:
-            await self._send_cross_message(
-                ws_models.Reponse(failure_mode=ws_models.FailureMode.BAD_TOKEN)
-            )
-        if msg.message_type == ws_models.InMessageType.SURRENDER:
-            pass
-        if msg.message_type == ws_models.InMessageType.MOVE:
-            pass
 
     # Game related callbacks
     __game: game.TicTacToeGame = None
@@ -205,6 +187,17 @@ class GameRoom:
                     message_type=ws_models.OutMessageType.WAITING_FOR_OTHER_MOVE,
                 ),
             )
+            completer = asyncio.Future()
+            self.__circle_player_subject.pipe(
+                ops.first(
+                    lambda msg: msg.message_type == ws_models.InMessageType.MOVE
+                    or msg.message_type == ws_models.InMessageType.SURRENDER
+                )
+            ).subscribe(lambda msg: completer.set_result(msg))
+            result = await completer
+            if result.message_type == ws_models.InMessageType.SURRENDER:
+                raise game.SurrenderException()
+            return ws_models.MoveData(**result.payload)
         else:
             await self._send_cross_message(
                 ws_models.OutMessage(
@@ -216,16 +209,31 @@ class GameRoom:
                     message_type=ws_models.OutMessageType.WAITING_FOR_OTHER_MOVE,
                 ),
             )
+            completer = asyncio.Future()
+            self.__cross_player_subject.pipe(
+                ops.first(
+                    lambda msg: msg.message_type == ws_models.InMessageType.MOVE
+                    or msg.message_type == ws_models.InMessageType.SURRENDER
+                )
+            ).subscribe(lambda msg: completer.set_result(msg))
+
+            result = await completer
+            if result.message_type == ws_models.InMessageType.SURRENDER:
+                raise game.SurrenderException()
+            return ws_models.MoveData(**result.payload)
 
     async def _notify_game_ended(self, reason: ws_models.GameEndedReason):
+        # TODO calculate elo delta here
         await self._send_circle_message(
             ws_models.OutMessage(
-                message_type=ws_models.OutMessageType.GAME_ENDED, payload=reason
+                message_type=ws_models.OutMessageType.GAME_ENDED,
+                payload=ws_models.GameEndedPayload(reson=reason),
             ),
         )
         await self._send_cross_message(
             ws_models.OutMessage(
-                message_type=ws_models.OutMessageType.GAME_ENDED, payload=reason
+                message_type=ws_models.OutMessageType.GAME_ENDED,
+                payload=ws_models.GameEndedPayload(reson=reason),
             ),
         )
 

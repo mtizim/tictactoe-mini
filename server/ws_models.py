@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional, Any
+from typing import Optional, Any, List
 from pydantic import BaseModel
 
 # Do serwera wysyłasz InMessage
@@ -39,6 +39,8 @@ class InMessage(BaseModel):
 # {"name": "InMessage","message_type":"register","token":"circle"}
 # {"name": "InMessage","message_type":"register","token":"cross"}
 # {"name": "InMessage","message_type":"surrender","token":"cros2s"}
+# {"name": "InMessage","message_type":"move","payload":{"row": 1,"column":1,"board":1},"token":"circle"}
+# {"name": "InMessage","message_type":"move","payload":{"row": 1,"column":1,"board":1},"token":"cross"}
 
 
 class FailureMode(str, Enum):
@@ -54,8 +56,16 @@ class Reponse(BaseModel):
 
 
 # TODO -implement model - probly some kind of table
+
+
+class BoardMark(str, Enum):
+    CIRCLE = CrossOrCircle.CIRCLE
+    CROSS = CrossOrCircle.CROSS
+    NONE = "none"
+
+
 class BoardData(BaseModel):
-    pass
+    data: List[List[List[BoardMark]]]
 
 
 class OutMessageType(str, Enum):

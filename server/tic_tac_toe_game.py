@@ -1,7 +1,14 @@
-from typing import Callable
+import numpy as np
+from typing import Callable, List
+from itertools import product
+import traceback
 
 import ws_models
 import inspect
+
+
+class SurrenderException(Exception):
+    pass
 
 
 class TicTacToeGame:
@@ -34,47 +41,99 @@ class TicTacToeGame:
         self.__game_ended_cb = game_ended_cb
         self.__bad_move_cb = bad_move_cb
 
-    __state: ws_models.BoardData = None  # TODO initial state
+    __state: ws_models.BoardData = [
+        [[ws_models.BoardMark.NONE for _ in range(3)] for _ in range(3)]
+        for _ in range(3)
+    ]
 
-    async def __check_state_ends_game_and_end(self) -> bool:
-        # TODO do what the method says it does
-        return True
+    def ___check_2d_board_ends_game(self, board) -> bool:  # input - 2d np array
+        # 3 horizontal checks,
+        for i in range(3):
+            vals = set(board[:, i].flatten())
+            if len(vals) == 1 and vals.pop() != ws_models.BoardMark.NONE:
+                return True
+        # 3 vertical checks
+        for i in range(3):
+            vals = set(board[i, :].flatten())
+            if len(vals) == 1 and vals.pop() != ws_models.BoardMark.NONE:
+                return True
+        # 2 cross checks
+        vals = set(board[i, i] for i in range(3))
+        if len(vals) == 1 and vals.pop() != ws_models.BoardMark.NONE:
+            return True
+        vals = set(board[i, 2 - i] for i in range(3))
+        if len(vals) == 1 and vals.pop() != ws_models.BoardMark.NONE:
+            return True
+        return False
+
+    def __check_state_ends_game(self) -> bool:
+        board = np.array(self.__state, dtype=object)
+        # 3x3 2d cases
+        for case in (board, np.swapaxes(board, 0, 1), np.swapaxes(board, 0, 2)):
+            for boardslice in (board[i, :, :] for i in range(3)):
+                if self.___check_2d_board_ends_game(boardslice):
+                    return True
+
+        # 4 3d crosses
+        vals = set(board[i, i, i] for i in range(3))
+        if len(vals) == 1 and vals.pop() != ws_models.BoardMark.NONE:
+            return True
+        vals = set(board[i, 2 - i, i] for i in range(3))
+        if len(vals) == 1 and vals.pop() != ws_models.BoardMark.NONE:
+            return True
+        vals = set(board[i, i, 2 - i] for i in range(3))
+        if len(vals) == 1 and vals.pop() != ws_models.BoardMark.NONE:
+            return True
+        vals = set(board[2 - i, i, i] for i in range(3))
+        if len(vals) == 1 and vals.pop() != ws_models.BoardMark.NONE:
+            return True
+
+        return False
 
     async def __validate_move(
         self,
         player: ws_models.CrossOrCircle,
         move: ws_models.MoveData,
     ):
-        # TODO actual move validation
-        if False:
-            await self.__bad_move_cb(player)
+        if any(not (0 <= e <= 2) for e in [move.row, move.board, move.column]):
+            return False
+        if self.__state[move.board][move.row][move.column] != ws_models.BoardMark.NONE:
+            return False
         return True
 
     async def start(self):
         try:
+            reason: ws_models.GameEndedReason = None
             while True:
-                should_break = await self.__do_turn(ws_models.CrossOrCircle.CROSS)
-                if should_break:
+                try:
+                    end_game = await self.__do_turn(ws_models.CrossOrCircle.CROSS)
+                except SurrenderException:
+                    reason = ws_models.GameEndedReason.CROSS_SURRENDER
                     break
-                should_break = await self.__do_turn(ws_models.CrossOrCircle.CIRCLE)
-                if should_break:
+                if end_game:
+                    reason = ws_models.GameEndedReason.CROSS_WON
                     break
-            #  TODO Communicate reason for game end here
-            await self.__game_ended_cb(ws_models.GameEndedReason.CIRCLE_WON)
+
+                try:
+                    end_game = await self.__do_turn(ws_models.CrossOrCircle.CIRCLE)
+                except SurrenderException:
+                    reason = ws_models.GameEndedReason.CROSS_SURRENDER
+                    break
+                if end_game:
+                    reason = ws_models.GameEndedReason.CIRCLE_WON
+                    break
+            await self.__game_ended_cb(reason)
         # pylint: disable=broad-except
         except Exception as e:
-            print(e)
             await self.__game_ended_cb(ws_models.GameEndedReason.PLAYER_QUIT)
+        # TODO update elo of players after game's ended
 
     async def __do_turn(self, player: ws_models.CrossOrCircle) -> bool:
-        print("asd1")
         move = await self.__wait_for_player_move(player)
-        print("asd2")
-        # TODO calculate state based on move
-        self.__state = self.__state
+
+        self.__state[move.board][move.row][move.column] = player
         await self.__board_data_cb(self.__state)
-        print("asd3")
-        return await self.__check_state_ends_game_and_end()
+        return self.__check_state_ends_game()
 
     async def __wait_for_player_move(
         self, player: ws_models.CrossOrCircle
@@ -83,3 +142,5 @@ class TicTacToeGame:
             move = await self.__waiting_for_player_cb(player)
             if await self.__validate_move(player, move):
                 return move
+            else:
+                await self.__bad_move_cb(player)
