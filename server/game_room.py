@@ -1,5 +1,8 @@
 from fastapi import WebSocket
 from fastapi import WebSocketDisconnect
+import rx
+from rx.subject import Subject
+import asyncio
 import ws_models
 
 
@@ -47,15 +50,23 @@ class GameRoom:
 
             if parsed.message_type == ws_models.InMessageType.REGISTER:
                 token = parsed.token
-                print(token)
                 self.__circle_token = token
                 self.__circle_player_ws = wbs
                 await self._send_circle_message(
                     ws_models.Reponse(failure_mode=ws_models.FailureMode.NONE)
                 )
+            else:
+                await wbs.close()
+
+            sub = Subject()
+
+            async def __listener(msg: str):
+                await self._handle_circle_message(ws_models.InMessage(**msg))
+
+            sub.subscribe(lambda msg: asyncio.create_task(__listener(msg)))
 
             async for msg in wbs.iter_json():
-                await self._handle_circle_message(ws_models.InMessage(**msg))
+                sub.on_next(msg)
 
         except WebSocketDisconnect:
             return
@@ -70,7 +81,7 @@ class GameRoom:
                 ws_models.OutMessage(
                     message_type=ws_models.OutMessageType.WAITING_FOR_REGISTRATION,
                     payload=ws_models.CrossOrCircle.CIRCLE,
-                )
+                ).dict()
             )
 
             received = await wbs.receive_json()
@@ -88,10 +99,14 @@ class GameRoom:
                 await self._send_cross_message(
                     ws_models.Reponse(failure_mode=ws_models.FailureMode.NONE)
                 )
+            else:
+                await wbs.close()
 
+            print("async forfor cross")
             async for msg in wbs.iter_json():
                 await self._handle_cross_message(ws_models.InMessage(**msg))
 
+            print("config done for cross")
         except WebSocketDisconnect:
             return
 
@@ -102,9 +117,9 @@ class GameRoom:
         if self.__cross_player_ws is not None and self.__circle_player_ws is not None:
             await wbs.close()
         elif self.__cross_player_ws is None:
-            self.register_token_for_cross(wbs)
+            await self.register_token_for_cross(wbs)
         else:
-            self.register_token_for_circle(wbs)
+            await self.register_token_for_circle(wbs)
 
     async def _send_circle_message(self, msg: ws_models.OutMessage):
         try:

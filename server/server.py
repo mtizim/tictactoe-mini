@@ -5,6 +5,24 @@ from typing import Dict
 from fastapi import FastAPI, Depends, HTTPException, status, WebSocket
 from fastapi.security import OAuth2PasswordRequestForm
 
+
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI()
+
+origins = [
+    "http://localhost",
+    "http://localhost:8000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 ANON = "anon"
 DEFAULT_ELO = 1500
 
@@ -161,7 +179,7 @@ async def cross_websocket(
         await wbs.close()
         return
     room = active_rooms[room_id]
-    await room.register_token_for_second_player(wbs)
+    await room.register_token_for_cross(wbs)
 
 
 @app.websocket("/room/{room_id}/other")

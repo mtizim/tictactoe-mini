@@ -5,3 +5,4 @@ tinydb
 pylint
 python-jose[cryptography]
 passlib[bcrypt]
+rx

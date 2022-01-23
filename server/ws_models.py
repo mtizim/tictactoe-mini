@@ -39,6 +39,11 @@ class InMessage(BaseModel):
     payload: Optional[Any]
 
 
+# {"name": "InMessage","message_type":"register","token":"circle"}
+# {"name": "InMessage","message_type":"register","token":"cross"}
+# {"name": "InMessage","message_type":"surrender","token":"cros2s"}
+
+
 class FailureMode(str, Enum):
     BAD_TOKEN = "bad_token"
     BAD_MOVE = "bad_move"

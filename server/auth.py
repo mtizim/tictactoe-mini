@@ -20,14 +20,15 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 1000
 
 
-#  TODO, probably some validation here
-# pylint: disable=unused-argument
 def _validate_username(username: str) -> bool:
+    if len(username) < 3:
+        return False
     return True
 
 
-# pylint: disable=unused-argument
 def _validate_password(password: str) -> bool:
+    if len(password) < 6 or len(password) > 256:
+        return False
     return True
 
 
