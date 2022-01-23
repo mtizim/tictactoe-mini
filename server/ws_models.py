@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Optional, Any
 from pydantic import BaseModel
-
+#test git
 # Do serwera wysyłasz InMessage
 # Serwer wysyła OutMessage i Response
 
