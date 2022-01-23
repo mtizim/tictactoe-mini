@@ -5,23 +5,11 @@ from typing import Dict
 from fastapi import FastAPI, Depends, HTTPException, status, WebSocket
 from fastapi.security import OAuth2PasswordRequestForm
 
-
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware import Middleware
+from starlette.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-origins = [
-    "http://localhost",
-    "http://localhost:8000",
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 ANON = "anon"
 DEFAULT_ELO = 1500
@@ -196,3 +184,12 @@ async def other_websocket(
         return
     room = active_rooms[room_id]
     await room.register_token_for_second_player(wbs)
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
