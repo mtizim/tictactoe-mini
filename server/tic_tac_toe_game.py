@@ -126,7 +126,6 @@ class TicTacToeGame:
         # pylint: disable=broad-except
         except Exception as e:
             await self.__game_ended_cb(ws_models.GameEndedReason.PLAYER_QUIT)
-        # TODO update elo of players after game's ended
 
     async def __do_turn(self, player: ws_models.CrossOrCircle) -> bool:
         move = await self.__wait_for_player_move(player)

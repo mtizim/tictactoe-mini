@@ -23,6 +23,11 @@ class PlayerInternal(BaseModel):
     disabled: Optional[datetime]
 
 
+class AvailableRoomInfo(BaseModel):
+    player_elo: int
+    identifier: str
+
+
 class RegistrationDTO(BaseModel):
     username: str
     password: str

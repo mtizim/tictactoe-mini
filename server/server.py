@@ -12,7 +12,7 @@ app = FastAPI()
 
 
 ANON = "anon"
-DEFAULT_ELO = 1500
+
 
 # pylint: disable=wrong-import-position
 import auth
@@ -115,6 +115,24 @@ def leaderboards():
 
 
 active_rooms: Dict[str, game_room.GameRoom] = {}
+
+
+@app.get("/rooms/active", response_model=list[models.AvailableRoomInfo])
+def get_active_rooms():
+    """
+    Gets active room info
+    """
+    rooms = [
+        [identifier, room.getAvailability()]
+        for (identifier, room) in active_rooms.items()
+    ]
+    rooms = [
+        models.AvailableRoomInfo(player_elo=e[1], identifier=e[0])
+        for e in rooms
+        if e[1] is not None
+    ]
+    print(rooms)
+    return rooms
 
 
 @app.post("/room/{room_id}", status_code=201, responses={409: {}})

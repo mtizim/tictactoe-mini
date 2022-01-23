@@ -55,9 +55,6 @@ class Reponse(BaseModel):
     failure_mode: FailureMode
 
 
-# TODO -implement model - probly some kind of table
-
-
 class BoardMark(str, Enum):
     CIRCLE = CrossOrCircle.CIRCLE
     CROSS = CrossOrCircle.CROSS
