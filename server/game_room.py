@@ -1,9 +1,8 @@
+import asyncio
 from fastapi import WebSocket
 from fastapi import WebSocketDisconnect
-import rx
 import rx.operators as ops
 from rx.subject import Subject
-import asyncio
 import ws_models
 
 import tic_tac_toe_game as game
@@ -16,7 +15,7 @@ class GameRoom:
     Responsible for handling everything game related
     """
 
-    def getAvailability(
+    def get_availability(
         self,
     ):  # None indicates not available, otherwise returns elo of circle or cross token
         if (
@@ -25,7 +24,7 @@ class GameRoom:
             return None
 
         token = self.__circle_token or self.__cross_token or self.creator_token
-        return elo.getEloForToken(token)
+        return elo.get_elo_for_token(token)
 
     creator_token: str = None
 
@@ -173,17 +172,17 @@ class GameRoom:
     # Game related callbacks
     __game: game.TicTacToeGame = None
 
-    async def _send_board_data(self, boardData: ws_models.BoardData):
+    async def _send_board_data(self, board_data: ws_models.BoardData):
         await self._send_circle_message(
             ws_models.OutMessage(
                 message_type=ws_models.OutMessageType.BOARD_DATA,
-                payload=boardData,
+                payload=board_data,
             )
         )
         await self._send_cross_message(
             ws_models.OutMessage(
                 message_type=ws_models.OutMessageType.BOARD_DATA,
-                payload=boardData,
+                payload=board_data,
             )
         )
 
@@ -235,17 +234,41 @@ class GameRoom:
             return ws_models.MoveData(**result.payload)
 
     async def _notify_game_ended(self, reason: ws_models.GameEndedReason):
-        # TODO calculate elo delta here
+
+        delta_circle, delta_cross = None, None
+        if reason in (
+            ws_models.GameEndedReason.CIRCLE_SURRENDER,
+            ws_models.GameEndedReason.CROSS_WON,
+        ):
+            delta_cross, delta_circle = elo.update_elo(
+                self.__cross_token, self.__circle_token
+            )
+        if reason in (
+            ws_models.GameEndedReason.CROSS_SURRENDER,
+            ws_models.GameEndedReason.CIRCLE_WON,
+        ):
+            delta_circle, delta_cross = elo.update_elo(
+                self.__circle_token, self.__cross_token
+            )
+
         await self._send_circle_message(
             ws_models.OutMessage(
                 message_type=ws_models.OutMessageType.GAME_ENDED,
-                payload=ws_models.GameEndedPayload(reson=reason),
+                payload=ws_models.GameEndedPayload(
+                    reson=reason,
+                    elo_delta=delta_circle,
+                    opponent_elo_delta=delta_cross,
+                ),
             ),
         )
         await self._send_cross_message(
             ws_models.OutMessage(
                 message_type=ws_models.OutMessageType.GAME_ENDED,
-                payload=ws_models.GameEndedPayload(reson=reason),
+                payload=ws_models.GameEndedPayload(
+                    reson=reason,
+                    elo_delta=delta_cross,
+                    opponent_elo_delta=delta_circle,
+                ),
             ),
         )
 
@@ -263,4 +286,12 @@ class GameRoom:
             game_ended_cb=lambda r: self._notify_game_ended(r),
             bad_move_cb=lambda p: self._notify_bad_move(p),
         )
+
+        self._send_circle_message(
+            ws_models.OutMessage(message_type=ws_models.OutMessageType.GAME_STARTED)
+        )
+        self._send_cross_message(
+            ws_models.OutMessage(message_type=ws_models.OutMessageType.GAME_STARTED)
+        )
+
         await self.__game.start()

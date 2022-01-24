@@ -36,13 +36,6 @@ class InMessage(BaseModel):
     payload: Optional[Any]
 
 
-# {"name": "InMessage","message_type":"register","token":"circle"}
-# {"name": "InMessage","message_type":"register","token":"cross"}
-# {"name": "InMessage","message_type":"surrender","token":"cros2s"}
-# {"name": "InMessage","message_type":"move","payload":{"row": 1,"column":1,"board":1},"token":"circle"}
-# {"name": "InMessage","message_type":"move","payload":{"row": 1,"column":1,"board":1},"token":"cross"}
-
-
 class FailureMode(str, Enum):
     BAD_TOKEN = "bad_token"
     BAD_MOVE = "bad_move"
@@ -67,7 +60,7 @@ class BoardData(BaseModel):
 
 class OutMessageType(str, Enum):
     WAITING_FOR_REGISTRATION = "waiting_for_registration"  # payload: CrossOrCircle.
-    #                             Use the payload to determine which player you are.
+    #                             Use the payload to determine which player you are
 
     BOARD_DATA = "board_data"  #     payload: BoardData
 
@@ -75,6 +68,7 @@ class OutMessageType(str, Enum):
     WAITING_FOR_OTHER_MOVE = "waiting_for_other_move"  # no payload
 
     GAME_ENDED = "game_ended"  # payload: GameEndedPayload
+    GAME_STARTED = "game_started"  # no payload
 
 
 class GameEndedReason(str, Enum):
@@ -87,8 +81,8 @@ class GameEndedReason(str, Enum):
 
 class GameEndedPayload(BaseModel):
     reason: GameEndedReason
-    elo_delta: int
-    opponent_elo_delta: int
+    elo_delta: Optional[float]
+    opponent_elo_delta: Optional[float]
 
 
 class OutMessage(BaseModel):

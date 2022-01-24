@@ -5,7 +5,6 @@ from typing import Dict
 from fastapi import FastAPI, Depends, HTTPException, status, WebSocket
 from fastapi.security import OAuth2PasswordRequestForm
 
-from fastapi.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -123,7 +122,7 @@ def get_active_rooms():
     Gets active room info
     """
     rooms = [
-        [identifier, room.getAvailability()]
+        [identifier, room.get_availability()]
         for (identifier, room) in active_rooms.items()
     ]
     rooms = [
@@ -131,7 +130,6 @@ def get_active_rooms():
         for e in rooms
         if e[1] is not None
     ]
-    print(rooms)
     return rooms
 
 
