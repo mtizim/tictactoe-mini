@@ -1,5 +1,9 @@
 import os
 from tinydb import TinyDB
 
-os.mkdir("data")
+try:
+    os.mkdir("data")
+# pylint: disable=broad-except
+except Exception:
+    pass
 players = TinyDB("data/players.json")
