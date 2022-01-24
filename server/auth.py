@@ -7,7 +7,8 @@ from passlib.context import CryptContext
 from tinydb import Query
 from models import PlayerInternal, RegistrationDTO, RegistrationError, LeaderboardData
 import database as db
-from server import ANON, DEFAULT_ELO
+from server import ANON
+from elo import DEFAULT_ELO
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -97,21 +98,34 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 
 async def get_current_player(token: str = Depends(oauth2_scheme)) -> PlayerInternal:
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
+
+    player = get_player_for_token(token)
+    if player is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return player
+
+
+def get_player_for_token(token: str) -> PlayerInternal:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
-            raise credentials_exception
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Could not validate credentials",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
     except JWTError as err:
-        raise credentials_exception from err
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        ) from err
     player = get_player(username)
-    if player is None:
-        raise credentials_exception
     return player
 
 

@@ -7,6 +7,7 @@ import asyncio
 import ws_models
 
 import tic_tac_toe_game as game
+import elo
 
 
 class GameRoom:
@@ -14,6 +15,17 @@ class GameRoom:
     Represents a game room and handles the game object
     Responsible for handling everything game related
     """
+
+    def getAvailability(
+        self,
+    ):  # None indicates not available, otherwise returns elo of circle or cross token
+        if (
+            self.__circle_token is not None and self.__cross_token is not None
+        ) or self.__game is not None:
+            return None
+
+        token = self.__circle_token or self.__cross_token or self.creator_token
+        return elo.getEloForToken(token)
 
     creator_token: str = None
 

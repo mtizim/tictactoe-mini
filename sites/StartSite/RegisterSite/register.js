@@ -12,6 +12,11 @@ async function doRegisterForm() {
     document.getElementById("password_col").value
   );
 
+  // wypisać
+  for (let [k, v] of registerdata.entries()) {
+    console.log(k, v);
+  }
+
   var object = {};
   registerdata.forEach(function (v, k) {
     object[k] = v;
@@ -30,30 +35,7 @@ async function doRegisterForm() {
   });
   const responsemyJson = await response.json(); //extract JSON from the http response
   console.log(responsemyJson);
-  console.log("registered");
- 
-
- //silent loging in
-var username = registerdata.get("username");
-var password = registerdata.get("password");
-
-login_string = `grant_type=&username=${username}&password=${password}&client_id=&client_secret=`;
-console.log(login_string);
-  //POST token
-  const login_response = await fetch("http://localhost:8000/token", {
-    method: "POST",
-    body: login_string, // string or object
-    headers: {
-      accept: "application/json",
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-  });
-  const login_responsejsonlog = await login_response.json(); //extract JSON from the http response
-
-  var token = login_responsejsonlog.access_token;
-  window.localStorage.setItem("player_token", token);
-
-
+  // do something with myJson
 
   return false;
 }

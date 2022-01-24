@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Optional, Any, List
 from pydantic import BaseModel
-#test git
+
 # Do serwera wysyłasz InMessage
 # Serwer wysyła OutMessage i Response
 
@@ -53,9 +53,6 @@ class FailureMode(str, Enum):
 class Reponse(BaseModel):
     name = "Response"
     failure_mode: FailureMode
-
-
-# TODO -implement model - probly some kind of table
 
 
 class BoardMark(str, Enum):
