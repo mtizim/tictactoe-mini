@@ -135,7 +135,6 @@ def create_room(
             headers={"WWW-Authenticate": "Bearer"},
         )
     active_rooms[room_id] = game_room.GameRoom(token)
-    print(active_rooms[room_id])
 
 
 @app.websocket("/room/{room_id}/circle")

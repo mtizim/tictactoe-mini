@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional, Any
+from typing import Optional, Any, List
 from pydantic import BaseModel
 #test git
 # Do serwera wysyłasz InMessage
@@ -14,9 +14,6 @@ class CrossOrCircle(str, Enum):
 class InMessageType(str, Enum):
     REGISTER = "register"  #   command, registers this token to this websocket
     #                                   ALWAYS send after WAITING_FOR_REGISTRATION request
-    #                                   responds with BAD_TOKEN or NONE
-
-    VERIFY = "verify"  #       command, verifies that this token is correct
     #                                   responds with BAD_TOKEN or NONE
 
     MOVE = "move"  #           payload: MoveData
@@ -42,11 +39,14 @@ class InMessage(BaseModel):
 # {"name": "InMessage","message_type":"register","token":"circle"}
 # {"name": "InMessage","message_type":"register","token":"cross"}
 # {"name": "InMessage","message_type":"surrender","token":"cros2s"}
+# {"name": "InMessage","message_type":"move","payload":{"row": 1,"column":1,"board":1},"token":"circle"}
+# {"name": "InMessage","message_type":"move","payload":{"row": 1,"column":1,"board":1},"token":"cross"}
 
 
 class FailureMode(str, Enum):
     BAD_TOKEN = "bad_token"
     BAD_MOVE = "bad_move"
+    UNEXPECTED = "unexpected"
     NONE = "none"
 
 
@@ -56,8 +56,16 @@ class Reponse(BaseModel):
 
 
 # TODO -implement model - probly some kind of table
+
+
+class BoardMark(str, Enum):
+    CIRCLE = CrossOrCircle.CIRCLE
+    CROSS = CrossOrCircle.CROSS
+    NONE = "none"
+
+
 class BoardData(BaseModel):
-    pass
+    data: List[List[List[BoardMark]]]
 
 
 class OutMessageType(str, Enum):
@@ -77,7 +85,7 @@ class GameEndedReason(str, Enum):
     CROSS_WON = "cross_won"
     CIRCLE_SURRENDER = "circle_surrender"
     CROSS_SURRENDER = "cross_surrender"
-    ERROR = "error"
+    PLAYER_QUIT = "player_quit"
 
 
 class GameEndedPayload(BaseModel):

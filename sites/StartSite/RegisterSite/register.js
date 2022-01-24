@@ -49,7 +49,11 @@ console.log(login_string);
     },
   });
   const login_responsejsonlog = await login_response.json(); //extract JSON from the http response
-  console.log(login_responsejsonlog);
+
+  var token = login_responsejsonlog.access_token;
+  window.localStorage.setItem("player_token", token);
+
+
 
   return false;
 }
