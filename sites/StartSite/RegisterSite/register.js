@@ -51,8 +51,9 @@ console.log(login_string);
   const login_responsejsonlog = await login_response.json(); //extract JSON from the http response
 
   var token = login_responsejsonlog.access_token;
-  window.localStorage.setItem("player_token", token);  
- console.log(window.localStorage.getItem("player_token"));
+  window.localStorage.setItem("player_token", token);
+
+
 
   return false;
 }

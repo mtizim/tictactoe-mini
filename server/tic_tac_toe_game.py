@@ -1,10 +1,7 @@
+from typing import Callable
 import numpy as np
-from typing import Callable, List
-from itertools import product
-import traceback
 
 import ws_models
-import inspect
 
 
 class SurrenderException(Exception):
@@ -70,7 +67,7 @@ class TicTacToeGame:
         board = np.array(self.__state, dtype=object)
         # 3x3 2d cases
         for case in (board, np.swapaxes(board, 0, 1), np.swapaxes(board, 0, 2)):
-            for boardslice in (board[i, :, :] for i in range(3)):
+            for boardslice in (case[i, :, :] for i in range(3)):
                 if self.___check_2d_board_ends_game(boardslice):
                     return True
 
@@ -92,7 +89,6 @@ class TicTacToeGame:
 
     async def __validate_move(
         self,
-        player: ws_models.CrossOrCircle,
         move: ws_models.MoveData,
     ):
         if any(not (0 <= e <= 2) for e in [move.row, move.board, move.column]):
@@ -124,7 +120,7 @@ class TicTacToeGame:
                     break
             await self.__game_ended_cb(reason)
         # pylint: disable=broad-except
-        except Exception as e:
+        except Exception:
             await self.__game_ended_cb(ws_models.GameEndedReason.PLAYER_QUIT)
 
     async def __do_turn(self, player: ws_models.CrossOrCircle) -> bool:
@@ -139,7 +135,7 @@ class TicTacToeGame:
     ) -> ws_models.MoveData:
         while True:
             move = await self.__waiting_for_player_cb(player)
-            if await self.__validate_move(player, move):
+            if await self.__validate_move(move):
                 return move
             else:
                 await self.__bad_move_cb(player)
