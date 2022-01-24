@@ -9,14 +9,8 @@ const response = await fetch('http://localhost:8000/leaderboards', {
   });
   const leaddata = await response.json(); //extract JSON from the http response
   //const lead = JSON.parse(leaderboardjson);
-  console.log(leaddata);
-
   //generowanie listy
   let list = document.getElementById("leaderboard");
-  //leaddata.forEach((item)=>{
-  //let li = document.createElement("li");
-  //li.innerText = item.username;
-  //list.appendChild(li);
 
   leaddata.forEach(function (player) {
     let li = document.createElement('li');
@@ -30,8 +24,16 @@ return false;
 
 async function displayPlayer(){
 
+    //var i;
+    //console.log("local storage");
+    //for (i = 0; i < localStorage.length; i++)   {
+    //    console.log(localStorage.key(i) + "=[" + localStorage.getItem(localStorage.key(i)) + "]");
+    //}
+    //console.log("koniec storage");
+
     var token = window.localStorage.getItem("player_token");
     console.log(token);
+    console.log("token");
 
     var object = {};
     object["access_token"] = token;
@@ -42,7 +44,7 @@ async function displayPlayer(){
         method: 'GET',
         headers: {
         'accept' : 'application/json',
-        'Authorization' : 'Bearer '+token
+        'Authorization' : 'Bearer '+ token
      }
     });
     const playerdata = await response.json(); 

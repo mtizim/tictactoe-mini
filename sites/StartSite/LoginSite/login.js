@@ -16,7 +16,7 @@ async function doLoginForm() {
 
 login_string = `grant_type=&username=${username}&password=${password}&client_id=&client_secret=`;
 console.log(login_string);
-  //POST token
+  //POST token logging in
   const login_response = await fetch("http://localhost:8000/token", {
     method: "POST",
     body: login_string, // string or object
@@ -27,6 +27,10 @@ console.log(login_string);
   });
   const login_responsejsonlog = await login_response.json(); //extract JSON from the http response
   console.log(login_responsejsonlog);
+//putting the player token in the storage
+  var token = login_responsejsonlog.access_token;
+  localStorage.clear();
+  localStorage.setItem("player_token", token);  
 
   return false;
 }
