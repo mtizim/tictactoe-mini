@@ -1,6 +1,7 @@
 //czyli 
 
 async function doLoginForm() {
+  var host = "https://tictactoe-mini.herokuapp.com/";
   // (B1) FORM DATA OBJECT
   var logindata = new FormData();
   logindata.append(
@@ -17,7 +18,7 @@ async function doLoginForm() {
 login_string = `grant_type=&username=${username}&password=${password}&client_id=&client_secret=`;
 console.log(login_string);
   //POST token
-  const login_response = await fetch("http://localhost:8000/token", {
+  const login_response = await fetch(host+'token', {
     method: "POST",
     body: login_string, // string or object
     headers: {

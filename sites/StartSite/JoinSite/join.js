@@ -1,6 +1,6 @@
 async function generateList() {
-
-const response = await fetch('http://localhost:8000/leaderboards', {
+var host = "https://tictactoe-mini.herokuapp.com/";
+const response = await fetch(host+'leaderboards', {
     method: 'GET',
     headers: {
       'accept' : 'application/json',
@@ -13,10 +13,6 @@ const response = await fetch('http://localhost:8000/leaderboards', {
 
   //generowanie listy
   let list = document.getElementById("leaderboard");
-  //leaddata.forEach((item)=>{
-  //let li = document.createElement("li");
-  //li.innerText = item.username;
-  //list.appendChild(li);
 
   leaddata.forEach(function (player) {
     let li = document.createElement('li');
@@ -25,10 +21,33 @@ const response = await fetch('http://localhost:8000/leaderboards', {
     li.innerHTML += player.username + " | score: " + player.leaderboard_data.wins;
 });
 
+//list with active rooms
+const rooms_response = await fetch(host+'rooms/active', {
+    method: 'GET',
+    headers: {
+      'accept' : 'application/json',
+      'Authorization' : 'Bearer'
+    }
+  });
+  const roomsdata = await rooms_response.json(); //extract JSON from the http response
+  console.log(roomsdata);
+
+  let roomlist = document.getElementById("activerooms");
+
+  roomsdata.forEach(function (room) {
+    let li = document.createElement('li');
+    roomlist.appendChild(li);
+
+    li.innerHTML += room.indentifier;});
+
+
+
 return false;
 }
 
 async function displayPlayer(){
+
+    var host = "https://tictactoe-mini.herokuapp.com/";
 
     var token = window.localStorage.getItem("player_token");
     console.log(token);
@@ -38,7 +57,7 @@ async function displayPlayer(){
     var playerjson = JSON.stringify(object);
     console.log(playerjson);
     
-    const response = await fetch('http://localhost:8000/player', {
+    const response = await fetch(host+'player', {
         method: 'GET',
         headers: {
         'accept' : 'application/json',

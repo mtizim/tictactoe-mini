@@ -1,4 +1,6 @@
 async function doRegisterForm() {
+
+  var host = "https://tictactoe-mini.herokuapp.com/";
   // (B1) FORM DATA OBJECT
   var registerdata = new FormData();
 
@@ -20,7 +22,7 @@ async function doRegisterForm() {
   //dla testu
   console.log(registerjson);
 
-  const response = await fetch("http://localhost:8000/register", {
+  const response = await fetch(host+'register', {
     method: "POST",
     body: registerjson, // string or object
     headers: {
@@ -40,7 +42,7 @@ var password = registerdata.get("password");
 login_string = `grant_type=&username=${username}&password=${password}&client_id=&client_secret=`;
 console.log(login_string);
   //POST token
-  const login_response = await fetch("http://localhost:8000/token", {
+  const login_response = await fetch(host+'token', {
     method: "POST",
     body: login_string, // string or object
     headers: {

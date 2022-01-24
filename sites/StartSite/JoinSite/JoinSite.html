@@ -37,8 +37,18 @@
         <h2 class="u-text u-text-default u-text-1">To start playing:</h2>
         <h3 class="u-text u-text-default u-text-2">Join an existing room:</h3>
         <h3 class="u-text u-text-default u-text-3">Start your own room:</h3>
+        <div style="overflow-y:scroll; height:150px">
+        <ol id="activerooms" class="u-text u-text-default u-text-4">
+        </ol> </div>
+        <a id="createroom_but" class="u-border-2 u-border-white u-btn u-button-style u-hover-black u-none u-text-body-alt-color u-text-hover-white u-btn-2">create room</a>
         <div class="u-align-left u-form u-form-1">
+<!---list na poczatku
+        <div style="overflow-y:scroll; height:150px">
+        <ol id="activerooms" class="u-text u-text-default u-text-4">
+        </ol> </div> -->
           <!--- form -->
+          <br>
+          <br>
           <form  class="u-clearfix u-form-spacing-10 u-form-vertical u-inner-form" name="form" style="padding: 10px;">
             <div class="u-form-group u-form-name">
               <label for="name-eeaf" class="u-form-control-hidden u-label"></label>
@@ -47,19 +57,28 @@
             <div class="u-align-center u-form-group u-form-submit">
               <a href="#" class="u-border-2 u-border-white u-btn u-btn-submit u-button-style u-hover-black u-none u-text-body-alt-color u-text-hover-white u-btn-1">join</a>
               <input type="submit" value="submit" class="u-form-control-hidden">
+              <!--- list with existing rooms 
+              <div style="overflow-y:scroll; height:150px">
+              <ol id="activerooms" class="u-text u-text-default u-text-2">
+            </ol> </div>-->
             </div>
             <input type="hidden" value="" name="recaptchaResponse">
           </form>
+  
         </div>
-        <a id="createroom_but" class="u-border-2 u-border-white u-btn u-button-style u-hover-black u-none u-text-body-alt-color u-text-hover-white u-btn-2">create room</a>
+        <!---
+        <a id="createroom_but" class="u-border-2 u-border-white u-btn u-button-style u-hover-black u-none u-text-body-alt-color u-text-hover-white u-btn-2">create room</a> -->
+        <!---
+        <div style="overflow-y:scroll; height:150px">
+        <ol id="activerooms" class="u-text u-text-default u-text-4">
+        </ol> </div> -->
+  
         <h2 class="u-text u-text-default u-text-4">Leaderboard</h2>
-
-        <div style="overflow-y:scroll; height:400px">
+        <div style="overflow-y:scroll; height:300px">
         <ol id="leaderboard" class="u-text u-text-default u-text-5">
-          <!---<li>Sample Item 1</li>
-          <li>Sample Item 2</li>
-          <li>Sample Item 3</li> -->
         </ol> </div>
+        <br>
+        <br>
       </div>
     </section>
     
