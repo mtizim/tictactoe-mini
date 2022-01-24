@@ -1,6 +1,7 @@
 async function generateList() {
+
 var host = "https://tictactoe-mini.herokuapp.com/";
-const response = await fetch(host+'leaderboards', {
+const response = await fetch(`${host}leaderboards`, {
     method: 'GET',
     headers: {
       'accept' : 'application/json',
@@ -22,7 +23,7 @@ const response = await fetch(host+'leaderboards', {
 });
 
 //list with active rooms
-const rooms_response = await fetch(host+'rooms/active', {
+const rooms_response = await fetch(`${host}rooms/active`, {
     method: 'GET',
     headers: {
       'accept' : 'application/json',
@@ -57,7 +58,7 @@ async function displayPlayer(){
     var playerjson = JSON.stringify(object);
     console.log(playerjson);
     
-    const response = await fetch(host+'player', {
+    const response = await fetch(`${host}player`, {
         method: 'GET',
         headers: {
         'accept' : 'application/json',

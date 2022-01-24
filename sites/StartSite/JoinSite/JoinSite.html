@@ -37,6 +37,7 @@
         <h2 class="u-text u-text-default u-text-1">To start playing:</h2>
         <h3 class="u-text u-text-default u-text-2">Join an existing room:</h3>
         <h3 class="u-text u-text-default u-text-3">Start your own room:</h3>
+        <!--- list with active rooms -->
         <div style="overflow-y:scroll; height:150px">
         <ol id="activerooms" class="u-text u-text-default u-text-4">
         </ol> </div>
@@ -55,14 +56,10 @@
               <input type="text" placeholder="Enter room id" id="name-eeaf" name="name" class="u-border-1 u-border-grey-30 u-input u-input-rectangle u-white" required="">
             </div>
             <div class="u-align-center u-form-group u-form-submit">
-              <a href="#" class="u-border-2 u-border-white u-btn u-btn-submit u-button-style u-hover-black u-none u-text-body-alt-color u-text-hover-white u-btn-1">join</a>
-              <input type="submit" value="submit" class="u-form-control-hidden">
-              <!--- list with existing rooms 
-              <div style="overflow-y:scroll; height:150px">
-              <ol id="activerooms" class="u-text u-text-default u-text-2">
-            </ol> </div>-->
+              <input id="join_but" value="join" class="u-border-2 u-border-white u-btn u-btn-submit u-button-style u-hover-black u-none u-text-body-alt-color u-text-hover-white u-btn-1"/>
+              <!---<input type="submit" value="submit" class="u-form-control-hidden"> -->
             </div>
-            <input type="hidden" value="" name="recaptchaResponse">
+           <!--- <input type="hidden" value="" name="recaptchaResponse">-->
           </form>
   
         </div>

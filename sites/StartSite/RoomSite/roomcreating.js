@@ -22,13 +22,14 @@ async function doCreateRoom() {
 
 console.log(object.room_id);
 var token = window.localStorage.getItem("player_token");
+console.log(token);
   //POST new room
   const room_response = await fetch(`${host}room/${object.room_id}`, {
     method: "POST",
     body: roomjson, // string or object
     headers: {
       accept: "application/json",
-      'Authorization' : 'Bearer '+token
+      'Authorization' : 'Bearer '+ token
     },
   });
   const roomresponsejson = await room_response.json(); //extract JSON from the http response
