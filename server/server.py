@@ -163,7 +163,8 @@ def create_room(
             scheduler.run()
 
     scheduler.enter(3600, 1, delroom)
-    scheduler.run()
+    scheduler.run(blocking=False)
+    return
 
 
 @app.websocket("/room/{room_id}/circle")
