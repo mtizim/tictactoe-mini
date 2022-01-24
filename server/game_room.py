@@ -1,10 +1,10 @@
 import asyncio
+from datetime import datetime
 from fastapi import WebSocket
 from fastapi import WebSocketDisconnect
 import rx.operators as ops
 from rx.subject import Subject
 import ws_models
-from datetime import datetime
 
 import tic_tac_toe_game as game
 import elo
