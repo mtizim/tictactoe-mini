@@ -1,4 +1,5 @@
 from datetime import timedelta
+import sched
 import time
 from typing import Dict
 
@@ -7,7 +8,9 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from starlette.middleware.cors import CORSMiddleware
 
+
 app = FastAPI()
+scheduler = sched.scheduler(time.time, time.sleep)
 
 
 ANON = "anon"
@@ -151,6 +154,16 @@ def create_room(
             headers={"WWW-Authenticate": "Bearer"},
         )
     active_rooms[room_id] = game_room.GameRoom(token)
+
+    def delroom():
+        if active_rooms[room_id].on_try_delete():
+            del active_rooms[room_id]
+        else:
+            scheduler.enter(3600, 1, delroom)
+            scheduler.run()
+
+    scheduler.enter(3600, 1, delroom)
+    scheduler.run()
 
 
 @app.websocket("/room/{room_id}/circle")

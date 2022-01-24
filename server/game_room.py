@@ -4,6 +4,7 @@ from fastapi import WebSocketDisconnect
 import rx.operators as ops
 from rx.subject import Subject
 import ws_models
+from datetime import datetime
 
 import tic_tac_toe_game as game
 import elo
@@ -26,7 +27,22 @@ class GameRoom:
         token = self.__circle_token or self.__cross_token or self.creator_token
         return elo.get_elo_for_token(token)
 
+    def on_try_delete(self) -> bool:  # returns True if game is deletable
+        if self.__last_input_recv is None:
+            return True
+        if self.__game_ended:
+            return True
+        diff = (datetime.now() - self.__last_input_recv).total_seconds()
+
+        if diff >= 60 * 10:
+            return True
+
+        return False
+
     creator_token: str = None
+
+    __game_ended: bool = False
+    __last_input_recv: datetime = None
 
     __circle_token: str = None
     __cross_token: str = None
@@ -84,6 +100,7 @@ class GameRoom:
                 asyncio.create_task(self._start_game())
 
             async for msg in wbs.iter_json():
+                self.__last_input_recv = datetime.now()
                 msg = ws_models.InMessage(**msg)
                 if msg.token != self.__circle_token:
                     await self._send_circle_message(
@@ -135,6 +152,7 @@ class GameRoom:
                 asyncio.create_task(self._start_game())
 
             async for msg in wbs.iter_json():
+                self.__last_input_recv = datetime.now()
                 msg = ws_models.InMessage(**msg)
                 if msg.token != self.__cross_token:
                     await self._send_cross_message(
@@ -295,3 +313,4 @@ class GameRoom:
         )
 
         await self.__game.start()
+        self.__game_ended = True
