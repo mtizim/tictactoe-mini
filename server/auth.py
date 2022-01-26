@@ -111,22 +111,22 @@ async def get_current_player(token: str = Depends(oauth2_scheme)) -> PlayerInter
 
 def get_player_for_token(token: str) -> PlayerInternal:
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Could not validate credentials",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
+        username = get_username_for_token(token)
+        if username is None or username == ANON:
+            return None
     except JWTError as err:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        ) from err
+        return None
     player = get_player(username)
     return player
+
+
+def get_username_for_token(token: str) -> str:
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        return username or ANON
+    except JWTError as err:
+        return ANON
 
 
 async def get_current_active_player(

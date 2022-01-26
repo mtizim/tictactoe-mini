@@ -68,7 +68,7 @@ class OutMessageType(str, Enum):
     WAITING_FOR_OTHER_MOVE = "waiting_for_other_move"  # no payload
 
     GAME_ENDED = "game_ended"  # payload: GameEndedPayload
-    GAME_STARTED = "game_started"  # no payload
+    GAME_STARTED = "game_started"  # payload: GameStartedInformation
 
 
 class GameEndedReason(str, Enum):
@@ -77,6 +77,11 @@ class GameEndedReason(str, Enum):
     CIRCLE_SURRENDER = "circle_surrender"
     CROSS_SURRENDER = "cross_surrender"
     PLAYER_QUIT = "player_quit"
+
+
+class GameStartedInformation(BaseModel):
+    opponent_name: str
+    opponent_elo: str
 
 
 class GameEndedPayload(BaseModel):

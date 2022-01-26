@@ -31,6 +31,9 @@ def update_elo(
     winner_elo += delta_winner
     loser_elo += delta_loser
 
+    __update_elo(winner_token, winner_elo)
+    __update_elo(loser_token, loser_elo)
+
     return (delta_winner, delta_loser)
 
 

@@ -8,6 +8,7 @@ import ws_models
 
 import tic_tac_toe_game as game
 import elo
+import auth
 
 
 class GameRoom:
@@ -305,11 +306,28 @@ class GameRoom:
             bad_move_cb=lambda p: self._notify_bad_move(p),
         )
 
+        cross_name = auth.get_username_for_token(self.__cross_token)
+        cross_elo = elo.get_elo_for_token(self.__cross_token)
+        circle_name = auth.get_username_for_token(self.__circle_token)
+        circle_elo = elo.get_elo_for_token(self.__circle_token)
+
         self._send_circle_message(
-            ws_models.OutMessage(message_type=ws_models.OutMessageType.GAME_STARTED)
+            ws_models.OutMessage(
+                message_type=ws_models.OutMessageType.GAME_STARTED,
+                payload=ws_models.GameStartedInformation(
+                    opponent_name=cross_name,
+                    opponent_elo=cross_elo,
+                ),
+            )
         )
         self._send_cross_message(
-            ws_models.OutMessage(message_type=ws_models.OutMessageType.GAME_STARTED)
+            ws_models.OutMessage(
+                message_type=ws_models.OutMessageType.GAME_STARTED,
+                payload=ws_models.GameStartedInformation(
+                    opponent_name=circle_name,
+                    opponent_elo=circle_elo,
+                ),
+            )
         )
 
         await self.__game.start()
