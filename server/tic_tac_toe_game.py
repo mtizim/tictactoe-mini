@@ -99,26 +99,28 @@ class TicTacToeGame:
 
     async def start(self):
         try:
-            reason: ws_models.GameEndedReason = None
             while True:
                 try:
                     end_game = await self.__do_turn(ws_models.CrossOrCircle.CROSS)
                 except SurrenderException:
-                    reason = ws_models.GameEndedReason.CROSS_SURRENDER
+                    await self.__game_ended_cb(
+                        ws_models.GameEndedReason.CROSS_SURRENDER
+                    )
                     break
                 if end_game:
-                    reason = ws_models.GameEndedReason.CROSS_WON
+                    await self.__game_ended_cb(ws_models.GameEndedReason.CROSS_WON)
                     break
 
                 try:
                     end_game = await self.__do_turn(ws_models.CrossOrCircle.CIRCLE)
                 except SurrenderException:
-                    reason = ws_models.GameEndedReason.CROSS_SURRENDER
+                    await self.__game_ended_cb(
+                        ws_models.GameEndedReason.CROSS_SURRENDER
+                    )
                     break
                 if end_game:
-                    reason = ws_models.GameEndedReason.CIRCLE_WON
+                    await self.__game_ended_cb(ws_models.GameEndedReason.CIRCLE_WON)
                     break
-            await self.__game_ended_cb(reason)
         # pylint: disable=broad-except
         except Exception:
             await self.__game_ended_cb(ws_models.GameEndedReason.PLAYER_QUIT)
