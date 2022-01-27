@@ -10,7 +10,7 @@ async function doLogAnon() {
   });
   const responsejson = await response.json(); //extract JSON from the http response
   console.log(responsejson);
-
+  localStorage.setItem("player_token", token);
   //tutaj trzeba wrzucić token do cookiesow/storage/czegokolwiek co by zadziałało
 
 
