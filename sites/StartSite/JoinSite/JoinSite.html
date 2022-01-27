@@ -38,9 +38,12 @@
         <h3 class="u-text u-text-default u-text-2">Join an existing room:</h3>
         <h3 class="u-text u-text-default u-text-3">Start your own room:</h3>
         <!--- list with active rooms -->
-        <div style="overflow-y:scroll; height:150px">
-        <ol id="activerooms" class="u-text u-text-default u-text-4">
+        <!---<div style="width:150px; float:right">-->
+        <div style="overflow-y:scroll; height:150px; width:390px; float:right" >
+        <ol id="activerooms" class="u-text u-text-default u-text-4" style="float:left">
         </ol> </div>
+        <br><br><br><br><br><br>
+       
         <a onclick="window.location.href='../RoomSite/RoomSite.html'" id="createroom_but" class="u-border-2 u-border-white u-btn u-button-style u-hover-black u-none u-text-body-alt-color u-text-hover-white u-btn-2">create room</a>
         <div class="u-align-left u-form u-form-1">
 <!---list na poczatku
@@ -53,10 +56,10 @@
           <form  class="u-clearfix u-form-spacing-10 u-form-vertical u-inner-form" name="form" style="padding: 10px;">
             <div class="u-form-group u-form-name">
               <label for="name-eeaf" class="u-form-control-hidden u-label"></label>
-              <input type="text" placeholder="Enter room id" id="name-eeaf" name="name" class="u-border-1 u-border-grey-30 u-input u-input-rectangle u-white" required="">
+              <input type="text" placeholder="Enter room id" id="text_roomid" name="name" class="u-border-1 u-border-grey-30 u-input u-input-rectangle u-white" required="">
             </div>
             <div class="u-align-center u-form-group u-form-submit">
-              <input id="join_but" value="join" class="u-border-2 u-border-white u-btn u-btn-submit u-button-style u-hover-black u-none u-text-body-alt-color u-text-hover-white u-btn-1"/>
+              <input onclick="joinExisting(); window.location.href='../RoomSite/RoomSite.html'" id="join_but" value="join" class="u-border-2 u-border-white u-btn u-btn-submit u-button-style u-hover-black u-none u-text-body-alt-color u-text-hover-white u-btn-1"/>
               <!---<input type="submit" value="submit" class="u-form-control-hidden"> -->
             </div>
            <!--- <input type="hidden" value="" name="recaptchaResponse">-->

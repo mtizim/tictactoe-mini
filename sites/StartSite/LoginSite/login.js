@@ -27,6 +27,7 @@ console.log(login_string);
     },
   });
   const login_responsejsonlog = await login_response.json(); //extract JSON from the http response
+  localStorage.setItem("player_token", token);
   console.log(login_responsejsonlog);
 
   return false;

@@ -39,7 +39,8 @@ const rooms_response = await fetch(`${host}rooms/active`, {
     let li = document.createElement('li');
     roomlist.appendChild(li);
 
-    li.innerHTML += room.indentifier;});
+    li.innerHTML += room.identifier;
+    });
 
 
 
@@ -75,5 +76,13 @@ async function displayPlayer(){
 
     return false;
 
+
+}
+
+async function joinExisting(){
+
+  var room_id = document.getElementById("text_roomid").value;
+  localStorage.setItem("room_id");
+  //tutaj dodac do local storage room id
 
 }
