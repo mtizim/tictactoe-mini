@@ -311,7 +311,7 @@ class GameRoom:
         circle_name = auth.get_username_for_token(self.__circle_token)
         circle_elo = elo.get_elo_for_token(self.__circle_token)
 
-        self._send_circle_message(
+        await self._send_circle_message(
             ws_models.OutMessage(
                 message_type=ws_models.OutMessageType.GAME_STARTED,
                 payload=ws_models.GameStartedInformation(
@@ -320,7 +320,7 @@ class GameRoom:
                 ),
             )
         )
-        self._send_cross_message(
+        await self._send_cross_message(
             ws_models.OutMessage(
                 message_type=ws_models.OutMessageType.GAME_STARTED,
                 payload=ws_models.GameStartedInformation(
