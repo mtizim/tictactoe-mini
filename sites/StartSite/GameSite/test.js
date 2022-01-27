@@ -77,7 +77,7 @@ async function pokoj(){
     var host = "https://tictactoe-mini.herokuapp.com/";
     var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdHJpbmd1cyIsImV4cCI6MTY0MzM3MzMwN30.kE8v6qFOOGL7mmKLk0wOuYaj3hz1pne1_GHOKipgYJA";
     var object = {};
-    object["room_id"] = "chica";
+    object["room_id"] = "sanana";
     var roomjson = JSON.stringify(object);
 
 

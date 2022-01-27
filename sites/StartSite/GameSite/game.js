@@ -1,14 +1,18 @@
-function drawSign(board, row, col,sign){
+function drawSign(board, row, col, sign){
     //var firstRow=document.getElementById("table1").rows[0];
     //var x = firstRow.insertCell(-1);
     //x.innerHTML="<img src='images/circle.png/>";
     //document.getElementById("table1").rows[0].innerHTML="<img src='images/circle.png/>";
+    if(sign=="none"){return;}
     var img = document.createElement('img'); 
     img.src = `images/${sign}.png`;
     img.width = "91";
     img.height = "86";
     img.position = "absolute";
-    document.getElementById(`${board}-${row}-${col}`).appendChild(img);
+    if (document.getElementById(`${board}-${row}-${col}`).children.length < 1){
+         document.getElementById(`${board}-${row}-${col}`).appendChild(img);
+    }
+   
 
 }
 
@@ -17,7 +21,9 @@ function getNumber(){
     return number;
 }
 
-function onCellClicked(x,y,z){
+function onCellClicked(x, y, z){
+    console.log("kliknieto"+x+y+z);
+
     if (!window.canClickOnBoard) {return;} 
     window.canClickOnBoard = false; 
     var moveData = {
@@ -25,15 +31,16 @@ function onCellClicked(x,y,z){
             column: z-1, 
             board: x-1 
     };
-   var moveDatajson = JSON.stringify(moveData); 
+   //var moveDatajson = JSON.stringify(moveData); 
 
     var move_msg = {
             name: "InMessage",
             message_type: "move",
             token: window.token,
-            payload: moveDatajson
+            payload: moveData
     };
-    ws.send(JSON.stringify(move_msg));
+    console.log(move_msg); 
+    window.ws.send(JSON.stringify(move_msg));
     return false;
 }
 
@@ -48,7 +55,7 @@ function onCellClicked(x,y,z){
     
     //tu to bedzie inaczej przekazane
 async function idk() {
-    var room_id = "chica";
+    var room_id = "sanana";
     var number = getNumber();
 
     if (number==1){
@@ -63,9 +70,9 @@ async function idk() {
 
     var host = `ws://tictactoe-mini.herokuapp.com/room/${room_id}/${sign}`;
     //opening a websocket
-    var ws = new WebSocket(host);
+    window.ws = new WebSocket(host);
 
-    ws.onmessage = function (event) { 
+    window.ws.onmessage = function (event) { 
         var msg = JSON.parse(event.data);
         console.log(msg);
 
@@ -73,6 +80,7 @@ async function idk() {
             case "OutMessage":
                 switch(msg.message_type){
                     case "waiting_for_registration":
+                        
                         document.getElementById("messages").innerHTML = "Waiting for other player to join";
                         var register_msg = {
                             name: "InMessage",
@@ -81,18 +89,34 @@ async function idk() {
                         };
                         var side = msg.payload;
                         console.log(register_msg);
-                        ws.send(JSON.stringify(register_msg));
-                    
-                    case "board_data":
-
+                        window.ws.send(JSON.stringify(register_msg));
+                        break;
                     case "waiting_for_move":
+                        console.log("czeka na ruch");
                         document.getElementById("messages").innerHTML = "Make a move";
-                        window.canClick = true;
+                        window.canClickOnBoard = true;
+                        break;
 
                     case "waiting_for_other_move":
                         document.getElementById("messages").innerHTML = "Other player is making a move";
-                    case "game_ended":
-                    case "game_started":
+                        break;
+
+                    case "board_data":
+                        console.log("weszlo w board data");
+                        var data = msg.payload;
+                        if(data == null){break;}
+                        for(let i = 0; i < data.length; i++) { //board
+                            for(let j = 0; j < data[i].length; j++) { //row
+                                 for(let k = 0; k < data[i][j].length; k++) { //column
+                                    drawSign(i+1, j+1, k+1, data[i][j][k]);
+                                 }
+                            }
+                        }
+                        break;
+
+                    //case "game_ended":
+                    //    document.getElementById("messages").innerHTML = "Game ended";
+                    //    break;
                 }
         }
 
