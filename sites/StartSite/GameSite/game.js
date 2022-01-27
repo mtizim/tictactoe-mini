@@ -55,7 +55,7 @@ function onCellClicked(x, y, z){
     
     //tu to bedzie inaczej przekazane
 async function idk() {
-    var room_id = "sanana";
+    var room_id = "zanana";
     var number = getNumber();
 
     if (number==1){
@@ -67,6 +67,8 @@ async function idk() {
     }
     console.log(window.token);
     console.log(room_id);
+    document.getElementById("tx_roomname").innerHTML = room_id;
+    document.getElementById("tx_opponentname").innerHTML = "waiting for a player...";
 
     var host = `ws://tictactoe-mini.herokuapp.com/room/${room_id}/${sign}`;
     //opening a websocket
@@ -80,6 +82,8 @@ async function idk() {
             case "OutMessage":
                 switch(msg.message_type){
                     case "waiting_for_registration":
+                        var info = msg.payload;
+                        document.getElementById("tx_sign").innerHTML = info;
                         
                         document.getElementById("messages").innerHTML = "Waiting for other player to join";
                         var register_msg = {
@@ -87,10 +91,14 @@ async function idk() {
                             message_type: "register",
                             token: window.token
                         };
-                        var side = msg.payload;
+                        
                         console.log(register_msg);
                         window.ws.send(JSON.stringify(register_msg));
                         break;
+                    case "game_started":
+                        var info = msg.payload;
+                        document.getElementById("tx_opponentname").innerHTML = info.opponent_name;
+
                     case "waiting_for_move":
                         console.log("czeka na ruch");
                         document.getElementById("messages").innerHTML = "Make a move";
@@ -108,6 +116,7 @@ async function idk() {
                         for(let i = 0; i < data.length; i++) { //board
                             for(let j = 0; j < data[i].length; j++) { //row
                                  for(let k = 0; k < data[i][j].length; k++) { //column
+                                    // console.log(data[i][j][k]);
                                     drawSign(i+1, j+1, k+1, data[i][j][k]);
                                  }
                             }
