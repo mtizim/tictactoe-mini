@@ -29,6 +29,8 @@ class MoveData(BaseModel):
     board: int  #  from 0 to 2
 
 
+# {"name":"InMessage","message_type":"register","token":"token1"}
+# {"name":"InMessage","message_type":"register","token":"token2"}
 class InMessage(BaseModel):
     name = "InMessage"
     message_type: InMessageType

@@ -274,7 +274,7 @@ class GameRoom:
             ws_models.OutMessage(
                 message_type=ws_models.OutMessageType.GAME_ENDED,
                 payload=ws_models.GameEndedPayload(
-                    reson=reason,
+                    reason=reason,
                     elo_delta=delta_circle,
                     opponent_elo_delta=delta_cross,
                 ),
@@ -284,7 +284,7 @@ class GameRoom:
             ws_models.OutMessage(
                 message_type=ws_models.OutMessageType.GAME_ENDED,
                 payload=ws_models.GameEndedPayload(
-                    reson=reason,
+                    reason=reason,
                     elo_delta=delta_cross,
                     opponent_elo_delta=delta_circle,
                 ),
