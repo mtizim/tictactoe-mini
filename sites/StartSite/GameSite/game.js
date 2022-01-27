@@ -55,7 +55,7 @@ function onCellClicked(x, y, z){
     
     //tu to bedzie inaczej przekazane
 async function idk() {
-    var room_id = "zanana";
+    var room_id = "aorta";
     var number = getNumber();
 
     if (number==1){
