@@ -16,7 +16,7 @@ async function doLoginForm() {
  var password = logindata.get("password");
 
 login_string = `grant_type=&username=${username}&password=${password}&client_id=&client_secret=`;
-
+var err =null;
 try{
   console.log(login_string);
   //POST token
@@ -36,8 +36,10 @@ try{
 }catch(err){
   //console.log(err.message);
   //alert(err.message.detail);
-  alert("error");
+  //alert("error");
 }
+if(err != null){alert("An error during logging in has occured");}
+
 
 
   return false;

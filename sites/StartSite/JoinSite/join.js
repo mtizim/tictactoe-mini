@@ -63,7 +63,7 @@ async function displayPlayer(){
         method: 'GET',
         headers: {
         'accept' : 'application/json',
-        'Authorization' : 'Bearer '+token
+        'Authorization' : 'Bearer '+ token
      }
     });
     const playerdata = await response.json(); 
@@ -82,7 +82,6 @@ async function displayPlayer(){
 async function joinExisting(){
 
   var room_id = document.getElementById("text_roomid").value;
-  localStorage.setItem("room_id");
-  //tutaj dodac do local storage room id
+  localStorage.setItem("room_id", room_id);
 
 }
