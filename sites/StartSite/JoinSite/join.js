@@ -36,8 +36,9 @@ const rooms_response = await fetch(`${host}rooms/active`, {
   let roomlist = document.getElementById("activerooms");
 
   roomsdata.forEach(function (room) {
-    let li = document.createElement('li');
+    let li = document.createElement('ul');
     li.onclick = () => joinExisting(room.identifier);
+    li.style.listStyleType = 'none'
     roomlist.appendChild(li);
 
     li.innerHTML += room.identifier;
