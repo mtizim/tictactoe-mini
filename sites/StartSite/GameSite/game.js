@@ -44,9 +44,12 @@ function onCellClicked(x, y, z){
 async function sockets() {
     
     var room_id = localStorage.getItem("room_id");
+    console.log(room_id)
     //var number = getNumber();
     var sign = localStorage.getItem("sign");
+    console.log(sign);
     window.token = localStorage.getItem("player_token");
+    console.log(token);
     //if (number==1){
     //    var sign = "cross"; 
     //    window.token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJDSE1VUkEiLCJleHAiOjE2NDMzOTk1ODB9.GmeQheo4MtHoxQ-8l26FZBUpl0yYiweoTuVRNLZLYQs";
