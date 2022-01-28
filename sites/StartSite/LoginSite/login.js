@@ -32,6 +32,7 @@ try{
   var token = login_responsejsonlog.access_token;
   localStorage.setItem("player_token", token);
   console.log(login_responsejsonlog);
+  window.location.href='../JoinSite/JoinSite.html'
 
 }catch(err){
   //console.log(err.message);
