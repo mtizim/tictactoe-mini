@@ -59,6 +59,7 @@ console.log(login_string);
   //console.log(getCookie("player_token"));
   console.log("token wypisany");
 
+  window.location.href='../JoinSite/JoinSite.html'
 
 
   return false;
