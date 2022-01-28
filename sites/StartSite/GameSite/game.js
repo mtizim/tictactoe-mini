@@ -150,3 +150,34 @@ async function doSurrender(){
     
     return false;
 }
+
+
+async function displayPlayer(){
+
+    var host = "https://tictactoe-mini.herokuapp.com/";
+
+    var token = localStorage.getItem("player_token");
+    console.log(token);
+
+    var object = {};
+    object["access_token"] = token;
+    var playerjson = JSON.stringify(object);
+    console.log(playerjson);
+    
+    const response = await fetch(`${host}player`, {
+        method: 'GET',
+        headers: {
+        'accept' : 'application/json',
+        'Authorization' : 'Bearer '+ token
+     }
+    });
+    const playerdata = await response.json(); 
+
+    document.getElementById("logged_username").innerHTML = playerdata.username || "anonymous";
+    document.getElementById("logged_wins").innerHTML = playerdata.leaderboard_data?.wins || 0;
+
+
+    return false;
+
+
+}
