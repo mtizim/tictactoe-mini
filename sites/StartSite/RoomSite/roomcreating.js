@@ -18,10 +18,8 @@ async function doCreateRoom() {
     object[k] = v;
   });
   var roomjson = JSON.stringify(object);
-console.log(object.room_id);
 
 var token = localStorage.getItem("player_token");
-console.log(token);
   //POST new room
   const room_response = await fetch(`${host}room/${object.room_id}`, {
     method: "POST",
@@ -32,7 +30,6 @@ console.log(token);
     },
   });
   const roomresponsejson = await room_response.json(); //extract JSON from the http response
-  console.log(roomresponsejson);
   localStorage.setItem("room_id", object.room_id);
 
 if(roomresponsejson != null){alert(roomresponsejson.detail);}else{

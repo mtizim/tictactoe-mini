@@ -12,27 +12,16 @@
 <script src="join.js"></script>
 
    
-    
-    <script type="application/ld+json">{
-		"@context": "http://schema.org",
-		"@type": "Organization",
-		"name": ""
-}</script>
     <meta name="theme-color" content="#478ac9">
     <meta property="og:title" content="Strona Główna">
     <meta property="og:type" content="website">
   </head>
   <body onload="generateList(); displayPlayer()" class="u-body"><header class="u-clearfix u-grey-90 u-header u-header" id="sec-4502"><div class="u-clearfix u-sheet u-sheet-1">
   
-  <!---<body onload="testy1(); testy2();" class="u-body"><header class="u-clearfix u-grey-90 u-header u-header" id="sec-4502"><div class="u-clearfix u-sheet u-sheet-1">
-    -->  
-            
-        
         <h5 class="u-align-right u-text u-text-grey-50 u-text-1">Logged as:</h5>
-        <!---<input type="text" id="logged_username" class="u-align-right u-text u-text-3"> -->
+     
         <h1 class="u-align-center u-text u-text-default u-text-2">Tic Tac Toe 3D</h1>
         <h5 id="logged_username" class="u-align-right u-text u-text-3"></h5>
-        <!--- <h5 class="u-align-right u-text u-text-3">username</h5>-->
         <h5 class="u-align-right u-text u-text-grey-50 u-text-4">Your score:</h5>
         <h5 id="logged_wins" class="u-align-right u-text u-text-5"></h5>
       </div></header>
@@ -41,21 +30,11 @@
         <h2 class="u-text u-text-default u-text-1">To start playing:</h2>
         <h3 class="u-text u-text-default u-text-2">Join an existing room:</h3>
         <h3 class="u-text u-text-default u-text-3">Start your own room:</h3>
-        <!--- list with active rooms -->
-        <!---<div style="width:150px; float:right">-->
         <div style="overflow-y:scroll; height:150px; width:390px; float:right" >
         <ol id="activerooms" class="u-text u-text-default u-text-4" style="float:left">
         </ol> </div>
         <br><br><br><br><br><br>
         <a onclick="window.location.href='../RoomSite/RoomSite.html'" id="createroom_but" class="u-border-2 u-border-white u-btn u-button-style u-hover-black u-none u-text-body-alt-color u-text-hover-white u-btn-2">create room</a>
-       
-
-        <!---
-        <a id="createroom_but" class="u-border-2 u-border-white u-btn u-button-style u-hover-black u-none u-text-body-alt-color u-text-hover-white u-btn-2">create room</a> -->
-        <!---
-        <div style="overflow-y:scroll; height:150px">
-        <ol id="activerooms" class="u-text u-text-default u-text-4">
-        </ol> </div> -->
   
         <h2 class="u-text u-text-default u-text-4">Leaderboard</h2>
         <div style="overflow-y:scroll; height:300px">

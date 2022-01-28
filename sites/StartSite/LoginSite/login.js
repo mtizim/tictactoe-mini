@@ -1,4 +1,4 @@
-//czyli 
+
 
 async function doLoginForm() {
   var host = "https://tictactoe-mini.herokuapp.com/";
@@ -19,7 +19,6 @@ login_string = `grant_type=&username=${username}&password=${password}&client_id=
 //var err =null;
 
 
-  console.log(login_string);
   //POST token
   const login_response = await fetch(`${host}token`, {
     method: "POST",

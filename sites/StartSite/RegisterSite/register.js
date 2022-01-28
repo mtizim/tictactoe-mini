@@ -20,7 +20,7 @@ async function doRegisterForm() {
   });
   var registerjson = JSON.stringify(object);
   //dla testu
-  console.log(registerjson);
+ 
 
   const response = await fetch(host+'register', {
     method: "POST",
@@ -31,16 +31,12 @@ async function doRegisterForm() {
     },
   });
   const responsemyJson = await response.json(); //extract JSON from the http response
-  console.log(responsemyJson);
-  console.log("registered");
- 
 
  //silent loging in
 var username = registerdata.get("username");
 var password = registerdata.get("password");
 
 login_string = `grant_type=&username=${username}&password=${password}&client_id=&client_secret=`;
-console.log(login_string);
   //POST token
   const login_response = await fetch(host+'token', {
     method: "POST",
@@ -53,12 +49,7 @@ console.log(login_string);
   const login_responsejsonlog = await login_response.json(); //extract JSON from the http response
 
   var token = login_responsejsonlog.access_token;
-  console.log(token);
   localStorage.setItem("player_token", token);
-  //setCookie("player_token", token, 10);
-  //console.log(getCookie("player_token"));
-  console.log("token wypisany");
-
   window.location.href='../JoinSite/JoinSite.html'
 
 

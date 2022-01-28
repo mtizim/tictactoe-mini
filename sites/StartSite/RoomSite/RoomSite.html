@@ -9,19 +9,8 @@
     <title>TicTacToe 3D</title>
     <link rel="stylesheet" href="nicepage.css" media="screen">
 <link rel="stylesheet" href="RoomSite.css" media="screen">
-
-    <!---<script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
-    <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
-    <meta name="generator" content="Nicepage 4.3.0, nicepage.com">
-    <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i"> -->
     <script src="roomcreating.js"></script>
 
-    
-    <script type="application/ld+json">{
-		"@context": "http://schema.org",
-		"@type": "Organization",
-		"name": ""
-}</script>
 
 
     <meta name="theme-color" content="#478ac9">
@@ -46,9 +35,6 @@
                   <input type="text" placeholder="Enter the name of the room" id="roomid" name="name" class="u-border-1 u-border-grey-30 u-input u-input-rectangle u-white" required="">
                 </div> 
                 <div class="u-form-email u-form-group">
-                  <!---
-                  <label for="password_log" class="u-label">Password:</label>
-                  <input type="email" placeholder="Enter your password" id="password_log" name="email" class="u-border-1 u-border-grey-30 u-input u-input-rectangle u-white" required=""> -->
                   <label for="choosesign" class="u-label">Play as:</label>
                   <div id="choosesign">
                   <input type="radio" id="circle" name="sign" value="circle">
@@ -59,8 +45,6 @@
                   </div>
                 </div>
                 <div class="u-align-left u-form-group u-form-submit">
-                  <!---<a href="#" class="u-border-2 u-border-white u-btn u-btn-submit u-button-style u-hover-black u-none u-text-body-alt-color u-text-hover-white u-btn-1">Log in</a> 
-                  <input type="submit" value="submit" class="u-form-control-hidden"> -->
                   <input
                     onclick="doCreateRoom()"
                     id="room_button"
