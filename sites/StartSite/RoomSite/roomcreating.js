@@ -33,6 +33,7 @@ console.log(token);
   });
   const roomresponsejson = await room_response.json(); //extract JSON from the http response
   console.log(roomresponsejson);
+  localStorage.setItem("room_id", room_id);
 
 if(roomresponsejson != null){alert(roomresponsejson.detail);}else{
     window.location.href='../GameSite/GameSite.html';

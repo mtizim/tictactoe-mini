@@ -53,9 +53,7 @@ return false;
 async function displayPlayer(){
 
     var host = "https://tictactoe-mini.herokuapp.com/";
-
-    //var token = localStorage.getItem("player_token");
-    var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJDSE1VUkEiLCJleHAiOjE2NDMzOTY1NDZ9.WGwQ0GLZ3E1qtNel7cSdoIEZeI2CU-QW6hF4vopriTw";
+    var token = localStorage.getItem("player_token");
     console.log(token);
 
     var object = {};
@@ -84,6 +82,7 @@ async function displayPlayer(){
 async function joinExisting(room_id){
   
   localStorage.setItem("room_id", room_id);
+  localStorage.setItem("sign", "other");
   //window.location.href='../RoomSite/RoomSite.html'
 
 }

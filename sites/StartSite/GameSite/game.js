@@ -16,14 +16,12 @@ function drawSign(board, row, col, sign){
 
 }
 
-function getNumber(){
-    var number = document.getElementById("number").value;
-    return number;
-}
+//function getNumber(){
+//    var number = document.getElementById("number").value;
+//    return number;
+//}
 
 function onCellClicked(x, y, z){
-    console.log("kliknieto"+x+y+z);
-
     if (!window.canClickOnBoard) {return;} 
     window.canClickOnBoard = false; 
     var moveData = {
@@ -31,7 +29,6 @@ function onCellClicked(x, y, z){
             column: z-1, 
             board: x-1 
     };
-   //var moveDatajson = JSON.stringify(moveData); 
 
     var move_msg = {
             name: "InMessage",
@@ -44,18 +41,19 @@ function onCellClicked(x, y, z){
     return false;
 }
 
-    //tu to bedzie inaczej przekazane
-async function idk() {
-    var room_id = "dorta";
-    var number = getNumber();
-
-    if (number==1){
-        var sign = "cross"; 
-        window.token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJDSE1VUkEiLCJleHAiOjE2NDMzOTk1ODB9.GmeQheo4MtHoxQ-8l26FZBUpl0yYiweoTuVRNLZLYQs";
-    }else{
-        var sign = "other"; 
-        window.token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdHJpbmd1cyIsImV4cCI6MTY0MzM5OTY1OX0.EgYKx5gvh-5HwCeZo59SvcQS2f8ideQjvTOjf20CiP4";
-    }
+async function sockets() {
+    
+    var room_id = localStorage.getItem("room_id");
+    //var number = getNumber();
+    var sign = localStorage.getItem("sign");
+    window.token = localStorage.getItem("player_token");
+    //if (number==1){
+    //    var sign = "cross"; 
+    //    window.token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJDSE1VUkEiLCJleHAiOjE2NDMzOTk1ODB9.GmeQheo4MtHoxQ-8l26FZBUpl0yYiweoTuVRNLZLYQs";
+    //}else{
+    //    var sign = "other"; 
+    //    window.token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdHJpbmd1cyIsImV4cCI6MTY0MzM5OTY1OX0.EgYKx5gvh-5HwCeZo59SvcQS2f8ideQjvTOjf20CiP4";
+    //}
     console.log(window.token);
     console.log(room_id);
     document.getElementById("tx_roomname").innerHTML = room_id;
@@ -178,6 +176,5 @@ async function displayPlayer(){
 
 
     return false;
-
 
 }
