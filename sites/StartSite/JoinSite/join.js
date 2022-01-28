@@ -70,7 +70,7 @@ async function displayPlayer(){
     const playerdata = await response.json(); 
 
     document.getElementById("logged_username").innerHTML = playerdata.username || "anonymous";
-    document.getElementById("logged_wins").innerHTML = playerdata.leaderboard_data.wins || 0;
+    document.getElementById("logged_wins").innerHTML = playerdata.leaderboard_data?.wins || 0;
 
 
     return false;
