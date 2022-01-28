@@ -44,26 +44,17 @@ function onCellClicked(x, y, z){
     return false;
 }
 
-//onClick = function(){if (!canClickOnBoard) {return;} canClickOnBoard = false;}
- //events
-    //Socket.onopen - socket connection is established.
-    //Socket.onmessage - client receives data from server.
-
-    //methods
-    //Socket.send() The send(data) method transmits data using the connection.
-    //Socket.close() The close() method would be used to terminate any existing connection.
-    
     //tu to bedzie inaczej przekazane
 async function idk() {
-    var room_id = "aorta";
+    var room_id = "dorta";
     var number = getNumber();
 
     if (number==1){
         var sign = "cross"; 
-        window.token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdHJpbmd1cyIsImV4cCI6MTY0MzM3MzMwN30.kE8v6qFOOGL7mmKLk0wOuYaj3hz1pne1_GHOKipgYJA";
+        window.token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJDSE1VUkEiLCJleHAiOjE2NDMzOTk1ODB9.GmeQheo4MtHoxQ-8l26FZBUpl0yYiweoTuVRNLZLYQs";
     }else{
         var sign = "other"; 
-        window.token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJDSE1VUkEiLCJleHAiOjE2NDMzNzI2MzF9.xP4to7Nej3inEKJuMfbpAzdARBslyPDlY8hR79jXsYM";
+        window.token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdHJpbmd1cyIsImV4cCI6MTY0MzM5OTY1OX0.EgYKx5gvh-5HwCeZo59SvcQS2f8ideQjvTOjf20CiP4";
     }
     console.log(window.token);
     console.log(room_id);
@@ -122,6 +113,20 @@ async function idk() {
                             }
                         }
                         break;
+                    case "game_ended":
+                        var win = msg.payload;
+                        if(win.reason == "cross_won"){
+                            document.getElementById("messages").innerHTML = "Cross Won!";}
+                        if(win.reason == "circle_won"){
+                            document.getElementById("messages").innerHTML = "Circle Won!";}
+                        if(win.reason == "cross_surrender"){
+                            document.getElementById("messages").innerHTML = "Cross Surrendred";}
+                        if(win.reason == "circle_surrender"){
+                            document.getElementById("messages").innerHTML = "Circle Surrendred";}
+                        if(win.reason == "player_quit"){
+                            document.getElementById("messages").innerHTML = "Player quited";}
+                            
+
 
                     //case "game_ended":
                     //    document.getElementById("messages").innerHTML = "Game ended";
@@ -131,11 +136,17 @@ async function idk() {
 
     };
 
-    //do zamykania
-    //ws.onclose = function() { 
-    //    // websocket is closed.
-    //    alert("Connection is closed..."); 
-    //};
-    //return false;
 
+}
+
+async function doSurrender(){
+    var surrender_msg = {
+            name: "InMessage",
+            message_type: "surrender",
+            token: window.token
+    };
+    console.log(surrender_msg); 
+    window.ws.send(JSON.stringify(surrender_msg));
+    
+    return false;
 }
