@@ -69,8 +69,8 @@ async function displayPlayer(){
     const playerdata = await response.json(); 
     console.log(playerdata);
 
-    document.getElementById("logged_username").innerHTML = playerdata.username;
-    document.getElementById("logged_wins").innerHTML = playerdata.leaderboard_data.wins;
+    document.getElementById("logged_username").innerHTML = playerdata.username || "anonymous";
+    document.getElementById("logged_wins").innerHTML = playerdata.leaderboard_data.wins || 0;
     //document.getElementById("yourH1_element_Id").innerHTML = "yourTextHere";
 
 
