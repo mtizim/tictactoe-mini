@@ -9,6 +9,7 @@ async function doLogAnon() {
     },
   });
   const responsejson = await response.json(); //extract JSON from the http response
+  var token = responsejson.access_token;
   localStorage.setItem("player_token", token);
   window.location.href='JoinSite/JoinSite.html'
 
